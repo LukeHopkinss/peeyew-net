@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Girls Night NYC — interactive",
-  description: "Landing → paint canvas → gallery. Inspired by peeyew.net",
+  title: "peeyew-unLimited",
+  description: "Discover your wildest dreams, pure and digital. Only at peeyew.net",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
