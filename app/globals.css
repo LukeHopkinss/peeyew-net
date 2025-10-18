@@ -1,0 +1,44 @@
+/* Tailwind v4 uses CSS-first config */
+@import "tailwindcss";
+
+/* brand theme tokens — creates utilities like text-redBrand, bg-lightBlue, from-gradientTop, to-gradientBottom, etc. */
+@theme {
+  --color-redBrand: #a50000;     /* red */
+  --color-pinkBrand: #ffc0f0;    /* pink */
+  --color-darkBlue: #002a93;     /* dark blue */
+  --color-lightBlue: #83a6ff;    /* light blue */
+  --color-greenBrand: #397520;   /* green */
+  --color-yellowBrand: #f9ec06;  /* yellow */
+  --color-menuBlue: #2b4cc1;     /* menu (unselected) */
+
+  /* gradient endpoints */
+  --color-gradientTop: #ffffff;
+  --color-gradientBottom: #7fa4ff;
+
+  /* optional shadows/fonts */
+  --shadow-soft: 0 10px 30px rgba(0,0,0,.12);
+  --font-display: ui-sans-serif, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Global base styles */
+html, body, #__next { height: 100%; }
+body {
+  font-family: var(--font-display);
+  /* page gradient: white → 7fa4ff */
+  @apply bg-gradient-to-b from-gradientTop to-gradientBottom text-darkBlue;
+}
+
+/* helpers used in your components */
+.landing-title { letter-spacing: .08em; }
+
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.canvas-shell {
+  /* 16:10 canvas, translucent backdrop, soft shadow from token */
+  @apply relative w-full max-w-5xl rounded-2xl backdrop-blur bg-white/70;
+  box-shadow: var(--shadow-soft);
+  aspect-ratio: 16 / 10;
+}
+
+.grass { user-select: none; pointer-events: none; }
