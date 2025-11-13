@@ -40,10 +40,14 @@ export default function Page() {
   const [word, setWord] = useState<string>("studio");
   const [mounted, setMounted] = useState<boolean>(false);
 
-  // scroll to bottom on first load
+  // NEW: keep top (header + gallery) hidden until we've scrolled to bottom
+  const [ready, setReady] = useState(false);
+
+  // scroll to bottom on first load, then reveal top next frame to avoid flash
   useEffect(() => {
     const id = window.requestAnimationFrame(() => {
       window.scrollTo({ top: document.body.scrollHeight, behavior: "auto" });
+      window.requestAnimationFrame(() => setReady(true));
     });
     return () => window.cancelAnimationFrame(id);
   }, []);
@@ -56,8 +60,13 @@ export default function Page() {
 
   return (
     <main className="relative min-h-screen w-full">
-      {/* TOP SECTION with gradient flipped: white → blue */}
-      <div className="bg-gradient-to-b from-[#7fa4ff] to-white">
+      {/* TOP SECTION with gradient flipped: white → blue
+          Hidden until `ready` so the dome gallery never flashes on first paint */}
+      <div
+        className={`bg-gradient-to-b from-[#7fa4ff] to-white transition-opacity duration-0 ${
+          ready ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+      >
         <Header />
         <section id="top-gallery" className="pt-1">
           <Gallery />
@@ -105,7 +114,7 @@ export default function Page() {
           )}
         </AnimatePresence>
 
-        {/* painting canvas + LEFT "more ↑" label */}
+        {/* painting canvas + Right "more ↑" label */}
         {entered && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -113,7 +122,7 @@ export default function Page() {
             transition={{ duration: 0.6 }}
             className="relative z-10 w-full flex items-center justify-center px-6"
           >
-            {/* LEFT label (hidden on very small screens to avoid overlap) */}
+            {/* Right label (hidden on very small screens to avoid overlap) */}
             <div className="hidden sm:block absolute right-2 md:right-6 top-1/3 -translate-y-1/2 pointer-events-none select-none">
               <div className="flex items-center gap-2 text-darkBlue">
                 <span className="font-semibold tracking-wide">more</span>
@@ -137,4 +146,3 @@ export default function Page() {
     </main>
   );
 }
-
