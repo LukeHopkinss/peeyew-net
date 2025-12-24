@@ -1,7 +1,7 @@
 // components/Gallery.tsx
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import DomeGallery from "./DomeGallery";
 import LightboxCarousel, { LightboxImage } from "./LightboxCarousel";
 import { projects } from "./projects";

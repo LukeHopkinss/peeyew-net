@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import DomeGallery from "./DomeGallery";
 import LightboxCarousel, { LightboxImage } from "./LightboxCarousel";
 
-// ⬇️ Extend your item type to optionally include a per-tile gallery
+//Extend your item type to optionally include a per-tile gallery
 export type Project = {
   title: string;
   description: string | React.ReactNode;

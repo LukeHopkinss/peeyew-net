@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useEffect, useMemo, useRef, useCallback } from 'react';
+import { useEffect, useMemo, useRef, useCallback, type CSSProperties } from 'react';
 import { useGesture } from '@use-gesture/react';
 
 type ImageItem = string | { src: string; alt?: string };
@@ -36,6 +36,11 @@ type ItemDef = {
   y: number;
   sizeX: number;
   sizeY: number;
+};
+
+// Allows inline CSS variables like { '--foo': 123 } without using `any`.
+type CSSVars = CSSProperties & {
+  [key: `--${string}`]: string | number | undefined;
 };
 
 const DEFAULT_IMAGES: ImageItem[] = [
@@ -273,7 +278,11 @@ export default function DomeGallery({
         stopInertia();
 
         const evt = event as PointerEvent;
-        pointerTypeRef.current = (evt.pointerType as any) || 'mouse';
+
+        // no `any`: only allow known pointer types
+        const pt = evt.pointerType;
+        pointerTypeRef.current = (pt === 'mouse' || pt === 'pen' || pt === 'touch') ? pt : 'mouse';
+
         if (pointerTypeRef.current === 'touch') evt.preventDefault();
         if (pointerTypeRef.current === 'touch') lockScroll();
         draggingRef.current = true;
@@ -319,7 +328,8 @@ export default function DomeGallery({
             if (dist2 <= TAP_THRESH_PX * TAP_THRESH_PX) isTap = true;
           }
 
-          let [vMagX, vMagY] = velArr;
+          // prefer-const fix:
+          const [vMagX, vMagY] = velArr;
           const [dirX, dirY] = dirArr;
           let vx = vMagX * dirX;
           let vy = vMagY * dirY;
@@ -337,7 +347,6 @@ export default function DomeGallery({
           cancelTapRef.current = !isTap;
 
           if (isTap && tapTargetRef.current && !focusedElRef.current) {
-            // NEW: If a consumer supplied onOpen, use it (hand off); otherwise keep original enlarge behavior
             const parent = tapTargetRef.current.parentElement as HTMLElement | null;
             if (onOpen && parent) {
               const src = parent.dataset.src || (tapTargetRef.current.querySelector('img') as HTMLImageElement)?.src || '';
@@ -382,7 +391,7 @@ export default function DomeGallery({
         parent.style.setProperty('--rot-y-delta', `0deg`);
         parent.style.setProperty('--rot-x-delta', `0deg`);
         el.style.visibility = '';
-        (el.style as any).zIndex = 0;
+        el.style.zIndex = '0';
         focusedElRef.current = null;
         rootRef.current?.removeAttribute('data-enlarging');
         openingRef.current = false;
@@ -460,7 +469,7 @@ export default function DomeGallery({
         requestAnimationFrame(() => {
           el2.style.visibility = '';
           el2.style.opacity = '0';
-          (el2.style as any).zIndex = 0;
+          el2.style.zIndex = '0';
           focusedElRef.current = null;
           rootRef.current?.removeAttribute('data-enlarging');
 
@@ -539,7 +548,8 @@ export default function DomeGallery({
       left: tileR.left, top: tileR.top, width: tileR.width, height: tileR.height
     };
     el.style.visibility = 'hidden';
-    (el.style as any).zIndex = 0;
+    el.style.zIndex = '0';
+
     const overlay = document.createElement('div');
     overlay.className = 'enlarge';
     overlay.style.cssText = `position:absolute; left:${frameR.left - mainR.left}px; top:${frameR.top - mainR.top}px; width:${frameR.width}px; height:${frameR.height}px; opacity:0; z-index:30; will-change:transform,opacity; transform-origin:top left; transition:transform ${enlargeTransitionMs}ms ease, opacity ${enlargeTransitionMs}ms ease; border-radius:${openedImageBorderRadius}; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.35);`;
@@ -550,6 +560,7 @@ export default function DomeGallery({
     img.style.cssText = `width:100%; height:100%; object-fit:cover; filter:${grayscale ? 'grayscale(1)' : 'none'};`;
     overlay.appendChild(img);
     viewerRef.current!.appendChild(overlay);
+
     const tx0 = tileR.left - frameR.left;
     const ty0 = tileR.top  - frameR.top;
     const sx0 = tileR.width / frameR.width;
@@ -565,6 +576,7 @@ export default function DomeGallery({
       overlay.style.transform = 'translate(0px, 0px) scale(1, 1)';
       rootRef.current?.setAttribute('data-enlarging', 'true');
     }, 16);
+
     const wantsResize = openedImageWidth || openedImageHeight;
     if (wantsResize) {
       const onFirstEnd = (ev: TransitionEvent) => {
@@ -618,13 +630,13 @@ export default function DomeGallery({
         ref={rootRef}
         className="sphere-root relative w-full h-full"
         style={{
-          ['--segments-x' as any]: segments,
-          ['--segments-y' as any]: segments,
-          ['--overlay-blur-color' as any]: overlayBlurColor,
-          ['--tile-radius' as any]: imageBorderRadius,
-          ['--enlarge-radius' as any]: openedImageBorderRadius,
-          ['--image-filter' as any]: grayscale ? 'grayscale(1)' : 'none'
-        } as React.CSSProperties}
+          '--segments-x': segments,
+          '--segments-y': segments,
+          '--overlay-blur-color': overlayBlurColor,
+          '--tile-radius': imageBorderRadius,
+          '--enlarge-radius': openedImageBorderRadius,
+          '--image-filter': grayscale ? 'grayscale(1)' : 'none'
+        } as CSSVars}
       >
         <main
           ref={mainRef}
@@ -644,12 +656,15 @@ export default function DomeGallery({
                   data-size-x={it.sizeX}
                   data-size-y={it.sizeY}
                   style={{
-                    ['--offset-x' as any]: it.x,
-                    ['--offset-y' as any]: it.y,
-                    ['--item-size-x' as any]: it.sizeX,
-                    ['--item-size-y' as any]: it.sizeY,
-                    top: '-999px', bottom: '-999px', left: '-999px', right: '-999px'
-                  } as React.CSSProperties}
+                    '--offset-x': it.x,
+                    '--offset-y': it.y,
+                    '--item-size-x': it.sizeX,
+                    '--item-size-y': it.sizeY,
+                    top: '-999px',
+                    bottom: '-999px',
+                    left: '-999px',
+                    right: '-999px'
+                  } as CSSVars}
                 >
                   <div
                     className="item__image absolute block overflow-hidden cursor-pointer bg-gray-200 transition-transform duration-300"
@@ -696,20 +711,6 @@ export default function DomeGallery({
             </div>
           </div>
 
-          {/* vignette/blur */}
-          {/* <div className="absolute inset-0 m-auto z-[3] pointer-events-none"
-               style={{ backgroundImage: `radial-gradient(rgba(235,235,235,0) 65%, var(--overlay-blur-color, ${overlayBlurColor}) 100%)` }} />
-          <div className="absolute inset-0 m-auto z-[3] pointer-events-none"
-               style={{ WebkitMaskImage: `radial-gradient(rgba(235,235,235,0) 70%, var(--overlay-blur-color, ${overlayBlurColor}) 90%)`,
-                        maskImage: `radial-gradient(rgba(235,235,235,0) 70%, var(--overlay-blur-color, ${overlayBlurColor}) 90%)`,
-                        backdropFilter: 'blur(3px)' }} />
-          <div className="absolute left-0 right-0 top-0 h-[120px] z-[5] pointer-events-none rotate-180"
-               style={{ background: `linear-gradient(to bottom, transparent, var(--overlay-blur-color, ${overlayBlurColor}))` }} />
-          <div className="absolute left-0 right-0 bottom-0 h-[120px] z-[5] pointer-events-none"
-               style={{ background: `linear-gradient(to bottom, transparent, var(--overlay-blur-color, ${overlayBlurColor}))` }} />
-          */}
-
-          {/* built-in enlarge container (still present if you don't pass onOpen) */}
           <div ref={viewerRef} className="absolute inset-0 z-20 pointer-events-none flex items-center justify-center" style={{ padding: 'var(--viewer-pad)' }}>
             <div ref={scrimRef} className="scrim absolute inset-0 z-10 pointer-events-none opacity-0 transition-opacity duration-500"
                  style={{ background: 'rgba(0, 0, 0, 0.4)', backdropFilter: 'blur(3px)' }} />
