@@ -1,4 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
 /node_modules
@@ -32,10 +31,40 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+.env.local
 
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
+
+# archived / unused legacy code
+/components/archive/
+
+# local notes, rollback drafts, and mockup/reference images
+/ROLLBACK.md
+/pynew.png
+/mockups/
+/screenshots/
+/reference/
+
+# compressed project backups
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# old public assets only used by archived gallery code
+# remove these if you still want to keep the legacy gallery assets in the repo
+/public/3D/
+/public/Digital/
+/public/GirlsNight/
+/public/Pips/
+/public/PVA/
+/public/PY/
+/public/cursors-SETTINGS.png
+/public/cursors-eraser.png
+/public/thing.png

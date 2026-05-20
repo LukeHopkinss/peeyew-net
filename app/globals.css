@@ -1,5 +1,13 @@
-/* Tailwind v4 uses CSS-first config */
-@import "tailwindcss";
+/* Tailwind v4 uses CSS-first config.
+   We disable Tailwind's default auto-detection with `source(none)` and then
+   explicitly opt-in `../app` and `../components` via `@source`. This keeps
+   markdown files (e.g. ROLLBACK.md at the repo root) out of the class-name
+   scan — those files may quote utility-class patterns as examples and the
+   scanner would otherwise try to compile them into real CSS rules, which
+   has broken the build before. */
+@import "tailwindcss" source(none);
+@source "../app";
+@source "../components";
 
 /* brand theme tokens — creates utilities like text-redBrand, bg-lightBlue, from-gradientTop, to-gradientBottom, etc. */
 @theme {
@@ -15,18 +23,29 @@
   --color-gradientTop: #ffffff;
   --color-gradientBottom: #7fa4ff;
 
+  /* === landing redesign tokens (additive — see fonts and colors.pdf) === */
+  --color-pyDarkBlue: #1e4dc7;   /* spec: Dark Blue logo bg */
+  --color-pyLightBlue: #92bcff;  /* spec: Light blue bg */
+  --color-pyTextBlue: #000dff;   /* spec: Dark blue text */
+
   /* optional shadows/fonts */
   --shadow-soft: 0 10px 30px rgba(0,0,0,.12);
   --font-display: ui-sans-serif, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Global base styles */
+/* Global base styles
+   NOTE 1: We intentionally don't set `font-family` on <body>. The
+   `fontHelveticaNeueBlack.className` applied to <body> in app/layout.tsx
+   already sets font-family to Helvetica Neue Black. Defining it here too
+   would compete with that and (depending on stylesheet order) may
+   override next/font.
+
+   NOTE 2: We also intentionally don't paint a global background or text
+   color on <body>. Each route (landing / peeyewmag / lovedate-radio)
+   paints its own bg via the top-level <main> element. Putting a default
+   here would either bleed through or get overridden — pointless either
+   way. */
 html, body, #__next { height: 100%; }
-body {
-  font-family: var(--font-display);
-  /* page gradient: white → 7fa4ff */
-  @apply bg-gradient-to-b from-gradientTop to-gradientBottom text-darkBlue;
-}
 
 /* helpers used in your components */
 .landing-title { letter-spacing: .08em; }
