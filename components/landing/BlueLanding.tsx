@@ -3,7 +3,7 @@ import PeeyewBanner from "./PeeyewBanner";
 import MaskGlyph from "./MaskGlyph";
 import MissionBlock from "./MissionBlock";
 import HeartMark from "./HeartMark";
-import ContactForm from "./ContactForm";
+//import ContactForm from "./ContactForm";
 
 // =============================================================================
 //  LAYOUT TOKENS — edit these to dial sizing/spacing without touching JSX.
@@ -43,7 +43,7 @@ const SPACING = {
   afterInstitute: "clamp(1rem, 3.5vw, 2.5rem)",  // gap below institute, above mask
   afterMask:      "clamp(1rem, 3.5vw, 2.5rem)",  // gap below mask, above mission block
   afterMission:   "clamp(1rem, 3.5vw, 2.5rem)",  // gap below mission, above tagline
-  taglineToForm:  "clamp(2.5rem, 9vw, 6rem)",    // gap below tagline, above contact form
+  taglineToForm:  "clamp(3rem, 12vw, 8rem)",    // gap below tagline, above contact form
   formToEmail:    "clamp(2rem, 6vw, 4rem)",      // gap below contact form, above email
   emailToCredit:  "clamp(0.25rem, 0.6vw, 0.75rem)", // tight gap between email and credit lines
   emailToHeart:   "clamp(0.4rem, 1vw, 1rem)",    // SMALL gap below credit, above heart — decrease to push heart even closer
@@ -140,20 +140,21 @@ export default function BlueLanding() {
         </p>
 
         {/* Contact form — POSTs to /api/contact → Google Sheets webhook.
-            See docs/contact-form-setup.md for the Apps Script setup. */}
+            See docs/contact-form-setup.md for the Apps Script setup. 
         <div
           className="w-full flex justify-center"
           style={{ marginTop: SPACING.taglineToForm }}
         >
           <ContactForm />
         </div>
-
+        */}
+        
         {/* Email + credit — sits below the form, pulls close to the heart */}
         <div
           className="flex flex-col items-center"
           style={{
             gap: SPACING.emailToCredit,
-            marginTop: SPACING.formToEmail,
+            marginTop: SPACING.taglineToForm,
           }}
         >
           <a
