@@ -35,7 +35,7 @@ export default function PeeyewBanner({
   bannerHeight = DEFAULT_BANNER_HEIGHT,
   imageHeight = DEFAULT_IMAGE_HEIGHT,
   imageWidth = DEFAULT_IMAGE_WIDTH,
-  href = "/",
+  href = "/landing",
 }: Props) {
   const [imgFailed, setImgFailed] = useState(false);
   const imgStyle = { height: imageHeight, width: imageWidth };
