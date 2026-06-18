@@ -34,7 +34,7 @@ const NAV_ITEMS: NavItem[] = [
 
 const TEXT_LINKS = [
   { label: "work", href: "/work" },
-  { label: "merch", href: "/merch" },
+  { label: "shop", href: "/shop" },
   { label: "about", href: "/about" },
 ];
 
@@ -124,9 +124,23 @@ export default function MenuOverlay() {
           type="button"
           aria-label="Close menu"
           onClick={() => setOpen(false)}
-          className="absolute left-2 top-2 z-10 flex h-12 w-12 items-center justify-center border-2 border-black bg-white text-4xl leading-none text-black cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-black"
+          className="absolute z-10 cursor-pointer leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-black"
+          style={{
+            // The PNG has ~37% transparent padding around the actual X, so the
+            // button is pulled up-left by that padding (minus a small inset) to
+            // seat the colored pixels in the corner. The nav clips the overflow.
+            top: "calc(clamp(0.15rem, 0.6vw, 0.4rem) - clamp(1.862rem, 5.586vw, 3.352rem))",
+            left: "calc(clamp(0.15rem, 0.6vw, 0.4rem) - clamp(1.848rem, 5.544vw, 3.326rem))",
+            padding: 0,
+          }}
         >
-          <span aria-hidden="true">x</span>
+          <Image
+            src="/landing/CLOSEmenu.png"
+            alt="Close menu"
+            width={512}
+            height={512}
+            className="h-[clamp(5rem,15vw,9rem)] w-auto select-none pointer-events-none"
+          />
         </button>
 
         <div className="flex h-full flex-col px-4 pb-5 pt-[clamp(5rem,11vh,7rem)]">

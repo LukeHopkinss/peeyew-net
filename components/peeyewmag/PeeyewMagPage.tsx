@@ -1,6 +1,7 @@
 import Image from "next/image";
 import MenuOverlay from "../landing/MenuOverlay";
 import PeeyewBanner from "../landing/PeeyewBanner";
+import MagLightbox from "./MagLightbox";
 
 const BANNER_HEIGHT = "clamp(100px, 20vw, 260px)";
 const BANNER_IMAGE_HEIGHT = "clamp(100px, 50vw, 720px)";
@@ -8,7 +9,6 @@ const PYM_MOCK_WIDTH = "clamp(240px, 46vw, 620px)";
 const PITCH_FONT_SIZE = "clamp(18px, 3.6vw, 42px)";
 const CALLOUT_FONT_SIZE = "clamp(18px, 3.5vw, 42px)";
 const HINT_FONT_SIZE = "clamp(13px, 2.2vw, 26px)";
-const COVER_OVERLAY_FONT_SIZE = "clamp(18px, 3.1vw, 38px)";
 
 const SPACING = {
   afterPymMock: "clamp(1.25rem, 4vw, 2.75rem)",
@@ -151,13 +151,18 @@ export default function PeeyewMagPage() {
           take a look inside the issue. ↓
         </p>
 
-        {/* image row */}
+        {/* image row — full-bleed so three covers stay large (close to their
+            original two-up size) instead of shrinking inside the container */}
         <div
-          className="grid w-full"
+          className="grid"
           style={{
-            gridTemplateColumns: "1fr 1fr",
+            gridTemplateColumns: "1fr 1fr 1fr",
             gap: "clamp(0.5rem, 1.5vw, 1rem)",
             marginTop: SPACING.afterHint,
+            marginLeft: "calc(50% - 50vw)",
+            marginRight: "calc(50% - 50vw)",
+            paddingLeft: "clamp(0.75rem, 3vw, 2rem)",
+            paddingRight: "clamp(0.75rem, 3vw, 2rem)",
           }}
         >
           {/* cover 1 */}
@@ -174,7 +179,7 @@ export default function PeeyewMagPage() {
             />
           </div>
 
-          {/* cover 2 with overlay text */}
+          {/* cover 2 with clickable overlay that opens the slideshow */}
           <div
             className="relative overflow-hidden"
             style={{ aspectRatio: "3 / 4" }}
@@ -186,34 +191,21 @@ export default function PeeyewMagPage() {
               height={1536}
               className="h-full w-full object-cover"
             />
-            <div
-              className="pointer-events-none absolute inset-0 flex items-center justify-center"
-              style={{
-                padding: "clamp(0.75rem, 2vw, 1.25rem)",
-                background:
-                  "linear-gradient(to top, rgba(0,0,0,0.72), rgba(0,0,0,0))",
-              }}
-            >
-              <p
-                style={{
-                  color: "#ffffff",
-                  fontSize: COVER_OVERLAY_FONT_SIZE,
-                  lineHeight: 0.96,
-                  textAlign: "right",
-                  textShadow: "0 2px 10px rgba(0,0,0,0.55)",
-                }}
-              >
-                girlsnight
-                <br />
-                mixes
-                <br />
-                pleasure
-                <br />
-                &
-                <br />
-                business
-              </p>
-            </div>
+            <MagLightbox />
+          </div>
+
+          {/* cover 3 */}
+          <div
+            className="relative overflow-hidden"
+            style={{ aspectRatio: "3 / 4" }}
+          >
+            <Image
+              src="/PYMag/sundayBEST.JPG"
+              alt="Sunday Best editorial"
+              width={2048}
+              height={1536}
+              className="h-full w-full object-cover"
+            />
           </div>
         </div>
       </div>
