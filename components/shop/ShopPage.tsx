@@ -12,7 +12,7 @@ const BANNER_IMAGE_HEIGHT = "clamp(100px, 50vw, 720px)";
 const COVER_SRC = "/PYMag/COVER.jpg";
 const COVER_WIDTH = 2625;
 const COVER_HEIGHT = 3375;
-const PRICE_LABEL = "$40.00";
+const PRICE_LABEL = "$20.00";
 
 const BG = "var(--color-yellowBrand)";
 const TEXT = "var(--color-pyTextBlue)";

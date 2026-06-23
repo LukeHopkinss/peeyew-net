@@ -5,11 +5,11 @@ import Stripe from "stripe";
 export const runtime = "nodejs";
 
 // Preorder pricing is fixed server-side — never trust an amount from the
-// client. $40.00, shipping included, US only.
+// client. $20.00, shipping included, US only.
 const PRODUCT_NAME = "PYM MAG — Issue 01 'PILOT' (Preorder)";
 const PRODUCT_DESCRIPTION =
   "Preorder of peeyewMAGAZINE Issue 01 'PILOT'. Price includes US shipping.";
-const UNIT_AMOUNT_CENTS = 4000;
+const UNIT_AMOUNT_CENTS = 2000;
 const CURRENCY = "usd";
 const ALLOWED_COUNTRIES: Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[] =
   ["US"];
