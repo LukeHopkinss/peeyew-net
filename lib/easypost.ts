@@ -1,7 +1,7 @@
 import EasyPostClient from "@easypost/api";
 
 /**
- * EasyPost integration: turns a paid Stripe preorder into a shipment in your
+ * EasyPost integration: turns a paid Stripe order into a shipment in your
  * EasyPost account so you can buy + print the label later from the EasyPost
  * dashboard (in bulk, when the issue actually ships).
  *
@@ -11,7 +11,7 @@ import EasyPostClient from "@easypost/api";
  *
  * We intentionally do NOT buy the label here. Creating the shipment is enough
  * to later buy the cheapest USPS rate from the dashboard, and it avoids paying
- * postage months before a preorder ships.
+ * postage months before an order ships.
  */
 
 // Address the labels ship FROM. Pulled from env so no real address is baked

@@ -1,8 +1,8 @@
-// Single source of truth for preorder pricing, imported by BOTH the checkout
+// Single source of truth for order pricing, imported by BOTH the checkout
 // API route (what we charge) and the shop page (what we display) so the two can
 // never drift apart. All amounts are USD cents.
 
-export const BASE_PRICE_CENTS = 4000; // $40.00 — Issue 01 preorder, US shipping included.
+export const BASE_PRICE_CENTS = 4000; // $40.00 — Issue 01 order, US shipping included.
 export const US_SHIPPING_CENTS = 0; // US shipping is baked into the base price.
 export const CA_SHIPPING_SURCHARGE_CENTS = 1000; // +$10.00 shipping to Canada.
 

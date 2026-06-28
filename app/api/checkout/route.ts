@@ -9,15 +9,15 @@ import {
 // The Stripe SDK relies on Node APIs and cannot run on the Edge runtime.
 export const runtime = "nodejs";
 
-// Preorder pricing is fixed server-side — never trust an amount from the
+// Order pricing is fixed server-side — never trust an amount from the
 // client. Base $40.00 includes US shipping; Canada adds a $10.00 shipping
 // surcharge. The buyer picks their country in the shop modal; we lock the
 // session to that single country + its shipping rate so the cheaper rate can't
 // be used for the wrong destination. (Hosted Checkout can't filter shipping by
 // the typed address itself — that's an Embedded Checkout-only feature.)
-const PRODUCT_NAME = "PYM MAG — Issue 01 'PILOT' (Preorder)";
+const PRODUCT_NAME = "PYM MAG — Issue 01 'PILOT'";
 const PRODUCT_DESCRIPTION =
-  "Preorder of peeyewMAGAZINE Issue 01 'PILOT'. US shipping included.";
+  "Order of peeyewMAGAZINE Issue 01 'PILOT'. US shipping included.";
 const CURRENCY = "usd";
 
 function resolveOrigin(request: Request): string {
@@ -84,16 +84,16 @@ export async function POST(request: Request) {
       shipping_options: shippingOptions,
       submit_type: "pay",
       // Description surfaces on the Stripe-sent receipt email so the buyer sees
-      // exactly what they preordered. Enable receipts in the Stripe Dashboard
+      // exactly what they ordered. Enable receipts in the Stripe Dashboard
       // (Settings → Customer emails → "Successful payments") to send them.
       payment_intent_data: {
-        description: "PYM MAG — Issue 01 'PILOT' preorder",
+        description: "PYM MAG — Issue 01 'PILOT' order",
       },
       // Short confirmation note shown on the Checkout page itself.
       custom_text: {
         submit: {
           message:
-            "You're preordering PYM MAG Issue 01 'PILOT'. A confirmation receipt will be emailed to you, and we'll send shipping updates before launch.",
+            "You're ordering PYM MAG Issue 01 'PILOT'. A confirmation receipt will be emailed to you, and we'll send shipping updates before launch.",
         },
       },
       success_url: `${origin}/shop?status=success&session_id={CHECKOUT_SESSION_ID}`,

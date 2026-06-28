@@ -2,7 +2,7 @@ import ShopPage from "../../components/shop/ShopPage";
 
 export const metadata = {
   title: "shop — peeyew",
-  description: "Preorder peeyewMAGAZINE Issue 01 'PILOT'. $40, US shipping included.",
+  description: "Order peeyewMAGAZINE Issue 01 'PILOT'. $40, US shipping included.",
 };
 
 type SearchParams = { status?: string };

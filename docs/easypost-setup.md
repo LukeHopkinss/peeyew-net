@@ -1,6 +1,6 @@
 # EasyPost shipping setup
 
-When someone pays for a magazine preorder through Stripe Checkout, Stripe sends
+When someone pays for a magazine order through Stripe Checkout, Stripe sends
 a `checkout.session.completed` event to **`/api/stripe/webhook`**. That route
 verifies the event, reads the buyer's shipping address, and creates a
 **shipment in your EasyPost account** — it does **not** buy the label. You buy
@@ -81,7 +81,7 @@ stripe trigger checkout.session.completed
 
 ## Design notes / trade-offs
 
-- **No label is bought automatically.** Preorders ship months out; auto-buying
+- **No label is bought automatically.** Orders ship months out; auto-buying
   would spend postage early and print labels you can't use yet. To switch to
   auto-buy later, call `shipment.buy(shipment.lowestRate(["USPS"]))` inside
   `createShipmentForOrder` (`lib/easypost.ts`).

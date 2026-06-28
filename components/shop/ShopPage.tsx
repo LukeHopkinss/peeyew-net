@@ -120,7 +120,7 @@ export default function ShopPage({ initialStatus }: ShopPageProps) {
           }}
         >
           {initialStatus === "success"
-            ? "thank you for your preorder! a receipt is on its way to your email."
+            ? "thank you for your order! a receipt is on its way to your email."
             : "checkout cancelled — your card was not charged."}
         </div>
       )}
@@ -142,14 +142,14 @@ export default function ShopPage({ initialStatus }: ShopPageProps) {
             marginBottom: "clamp(1rem, 3vw, 2rem)",
           }}
         >
-          preorder issue 01 &mdash; &lsquo;PILOT&rsquo;
+          order issue 01 &mdash; &lsquo;PILOT&rsquo;
         </p>
 
         {/* waving cover — click to enlarge & buy */}
         <motion.button
           type="button"
           onClick={open}
-          aria-label="Enlarge cover and preorder"
+          aria-label="Enlarge cover and order"
           className="cursor-pointer"
           style={{
             background: "transparent",
@@ -185,7 +185,7 @@ export default function ShopPage({ initialStatus }: ShopPageProps) {
             marginTop: "clamp(1rem, 3vw, 2rem)",
           }}
         >
-          tap the cover to preorder :)
+          tap the cover to order :)
         </p>
       </section>
 
@@ -193,7 +193,7 @@ export default function ShopPage({ initialStatus }: ShopPageProps) {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Preorder PYM MAG"
+          aria-label="Order PYM MAG"
           onClick={close}
           style={{
             position: "fixed",
@@ -318,7 +318,7 @@ export default function ShopPage({ initialStatus }: ShopPageProps) {
                 paddingBottom: "clamp(0.6rem, 1.6vw, 1rem)",
               }}
             >
-              {loading ? "redirecting…" : `preorder · ${priceLabel}`}
+              {loading ? "redirecting…" : `order · ${priceLabel}`}
             </button>
 
             {error && (
