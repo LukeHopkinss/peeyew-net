@@ -1,18 +1,24 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import {
+  BASE_PRICE_CENTS,
+  normalizeCountry,
+  shippingRateFor,
+} from "../../../lib/pricing";
 
 // The Stripe SDK relies on Node APIs and cannot run on the Edge runtime.
 export const runtime = "nodejs";
 
 // Preorder pricing is fixed server-side — never trust an amount from the
-// client. $20.00, shipping included, US only.
+// client. Base $40.00 includes US shipping; Canada adds a $10.00 shipping
+// surcharge. The buyer picks their country in the shop modal; we lock the
+// session to that single country + its shipping rate so the cheaper rate can't
+// be used for the wrong destination. (Hosted Checkout can't filter shipping by
+// the typed address itself — that's an Embedded Checkout-only feature.)
 const PRODUCT_NAME = "PYM MAG — Issue 01 'PILOT' (Preorder)";
 const PRODUCT_DESCRIPTION =
-  "Preorder of peeyewMAGAZINE Issue 01 'PILOT'. Price includes US shipping.";
-const UNIT_AMOUNT_CENTS = 2000;
+  "Preorder of peeyewMAGAZINE Issue 01 'PILOT'. US shipping included.";
 const CURRENCY = "usd";
-const ALLOWED_COUNTRIES: Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[] =
-  ["US"];
 
 function resolveOrigin(request: Request): string {
   return (
@@ -39,6 +45,22 @@ export async function POST(request: Request) {
   const stripe = new Stripe(secretKey);
   const origin = resolveOrigin(request);
 
+  // Read only the destination country from the client; the shipping rate is
+  // always derived server-side from lib/pricing.
+  const body = (await request.json().catch(() => ({}))) as { country?: unknown };
+  const country = normalizeCountry(body.country);
+  const rate = shippingRateFor(country);
+
+  const shippingOptions: Stripe.Checkout.SessionCreateParams.ShippingOption[] = [
+    {
+      shipping_rate_data: {
+        type: "fixed_amount",
+        fixed_amount: { amount: rate.amountCents, currency: CURRENCY },
+        display_name: rate.label,
+      },
+    },
+  ];
+
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
@@ -47,7 +69,7 @@ export async function POST(request: Request) {
           quantity: 1,
           price_data: {
             currency: CURRENCY,
-            unit_amount: UNIT_AMOUNT_CENTS,
+            unit_amount: BASE_PRICE_CENTS,
             product_data: {
               name: PRODUCT_NAME,
               description: PRODUCT_DESCRIPTION,
@@ -56,13 +78,16 @@ export async function POST(request: Request) {
           },
         },
       ],
-      shipping_address_collection: { allowed_countries: ALLOWED_COUNTRIES },
+      // Lock the session to the chosen country so a buyer can't switch to a
+      // cheaper region (and its rate) on Stripe's page.
+      shipping_address_collection: { allowed_countries: [country] },
+      shipping_options: shippingOptions,
       submit_type: "pay",
       // Description surfaces on the Stripe-sent receipt email so the buyer sees
       // exactly what they preordered. Enable receipts in the Stripe Dashboard
       // (Settings → Customer emails → "Successful payments") to send them.
       payment_intent_data: {
-        description: "PYM MAG — Issue 01 'PILOT' preorder (US shipping included)",
+        description: "PYM MAG — Issue 01 'PILOT' preorder",
       },
       // Short confirmation note shown on the Checkout page itself.
       custom_text: {

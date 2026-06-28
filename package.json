@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@easypost/api": "^8.8.0",
     "@use-gesture/react": "^10.3.1",
     "framer-motion": "^12.23.24",
     "motion": "^12.23.24",

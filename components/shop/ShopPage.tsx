@@ -5,6 +5,13 @@ import { motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import MenuOverlay from "../landing/MenuOverlay";
 import PeeyewBanner from "../landing/PeeyewBanner";
+import {
+  CA_SHIPPING_SURCHARGE_CENTS,
+  formatUsd,
+  SHIPPING_RATES,
+  totalCents,
+  type ShipCountry,
+} from "../../lib/pricing";
 
 const BANNER_HEIGHT = "clamp(100px, 20vw, 260px)";
 const BANNER_IMAGE_HEIGHT = "clamp(100px, 50vw, 720px)";
@@ -12,7 +19,6 @@ const BANNER_IMAGE_HEIGHT = "clamp(100px, 50vw, 720px)";
 const COVER_SRC = "/PYMag/COVER.jpg";
 const COVER_WIDTH = 2625;
 const COVER_HEIGHT = 3375;
-const PRICE_LABEL = "$20.00";
 
 const BG = "var(--color-yellowBrand)";
 const TEXT = "var(--color-pyTextBlue)";
@@ -29,6 +35,9 @@ export default function ShopPage({ initialStatus }: ShopPageProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [country, setCountry] = useState<ShipCountry>("US");
+
+  const priceLabel = formatUsd(totalCents(country));
 
   const open = useCallback(() => {
     setError(null);
@@ -59,7 +68,11 @@ export default function ShopPage({ initialStatus }: ShopPageProps) {
     setError(null);
 
     try {
-      const res = await fetch("/api/checkout", { method: "POST" });
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ country }),
+      });
       const data = (await res.json()) as { url?: string; error?: string };
 
       if (!res.ok || !data.url) {
@@ -73,7 +86,7 @@ export default function ShopPage({ initialStatus }: ShopPageProps) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
       setLoading(false);
     }
-  }, []);
+  }, [country]);
 
   return (
     <main
@@ -247,8 +260,44 @@ export default function ShopPage({ initialStatus }: ShopPageProps) {
                 letterSpacing: "0.03em",
               }}
             >
-              PYM MAG &mdash; {PRICE_LABEL}
+              PYM MAG &mdash; {priceLabel}
             </p>
+
+            {/* ship-to country — locks the shipping rate on Stripe */}
+            <label
+              className="flex items-center uppercase"
+              style={{
+                color: "#ffffff",
+                fontSize: "clamp(12px, 1.8vw, 17px)",
+                letterSpacing: "0.04em",
+                gap: "clamp(0.4rem, 1.2vw, 0.7rem)",
+              }}
+            >
+              <span>Ship to</span>
+              <select
+                value={country}
+                onChange={(e) => setCountry(e.target.value as ShipCountry)}
+                className="uppercase"
+                style={{
+                  backgroundColor: "transparent",
+                  color: "#ffffff",
+                  border: `2px solid ${BUTTON_TEXT}`,
+                  cursor: "pointer",
+                  fontSize: "clamp(12px, 1.8vw, 17px)",
+                  letterSpacing: "0.04em",
+                  paddingLeft: "clamp(0.6rem, 1.6vw, 1rem)",
+                  paddingRight: "clamp(0.6rem, 1.6vw, 1rem)",
+                  paddingTop: "clamp(0.3rem, 0.9vw, 0.5rem)",
+                  paddingBottom: "clamp(0.3rem, 0.9vw, 0.5rem)",
+                }}
+              >
+                {SHIPPING_RATES.map(({ country: code, optionLabel }) => (
+                  <option key={code} value={code} style={{ color: "#000000" }}>
+                    {optionLabel}
+                  </option>
+                ))}
+              </select>
+            </label>
 
             <button
               type="button"
@@ -269,7 +318,7 @@ export default function ShopPage({ initialStatus }: ShopPageProps) {
                 paddingBottom: "clamp(0.6rem, 1.6vw, 1rem)",
               }}
             >
-              {loading ? "redirecting…" : `preorder · ${PRICE_LABEL}`}
+              {loading ? "redirecting…" : `preorder · ${priceLabel}`}
             </button>
 
             {error && (
@@ -292,7 +341,11 @@ export default function ShopPage({ initialStatus }: ShopPageProps) {
                 letterSpacing: "0.04em",
               }}
             >
-              price includes US shipping · secure checkout via stripe
+              {country === "CA"
+                ? `includes magazine + ${formatUsd(
+                    CA_SHIPPING_SURCHARGE_CENTS,
+                  )} shipping to Canada · secure checkout via stripe`
+                : "price includes US shipping · secure checkout via stripe"}
             </p>
           </div>
         </div>
